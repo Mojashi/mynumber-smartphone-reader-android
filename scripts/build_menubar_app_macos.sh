@@ -10,7 +10,7 @@ SDKROOT_DEFAULT="/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk"
 SDKROOT_VALUE="${SDKROOT:-$SDKROOT_DEFAULT}"
 
 if [[ ! -d "$SDKROOT_VALUE" ]]; then
-  SDKROOT_VALUE="$SDKROOT_DEFAULT"
+  SDKROOT_VALUE="$(env -u DEVELOPER_DIR xcrun --sdk macosx --show-sdk-path)"
 fi
 
 HELPER_PATH="$(bash "$ROOT_DIR/scripts/build_rfcomm_client_macos.sh")"
