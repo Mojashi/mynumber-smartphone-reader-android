@@ -6,7 +6,11 @@ BUILD_DIR="$ROOT_DIR/build/mac-app"
 APP_NAME="MyNumber Bridge.app"
 APP_DIR="$BUILD_DIR/$APP_NAME"
 EXECUTABLE_NAME="MyNumberBridgeStatusApp"
-SDKROOT_VALUE="${SDKROOT:-$(env -u DEVELOPER_DIR xcrun --sdk macosx --show-sdk-path)}"
+if [[ -n "${SDKROOT:-}" && -d "${SDKROOT}" ]]; then
+  SDKROOT_VALUE="${SDKROOT}"
+else
+  SDKROOT_VALUE="$(env -u DEVELOPER_DIR -u SDKROOT xcrun --sdk macosx --show-sdk-path)"
+fi
 
 HELPER_PATH="$(bash "$ROOT_DIR/scripts/build_rfcomm_client_macos.sh")"
 

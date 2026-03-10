@@ -75,10 +75,14 @@ jobs:
       - name: Build macOS app
         run: bash ./scripts/build_menubar_app_macos.sh
 
+      - name: Build macOS beta pkg
+        run: bash ./scripts/build_app_pkg_macos.sh
+
       - name: Package macOS artifacts
         run: |
           mkdir -p dist
           ditto -c -k --sequesterRsrc --keepParent "build/mac-app/MyNumber Bridge.app" "dist/MyNumber-Bridge-macos-app.zip"
+          cp "build/pkg/MyNumber-Bridge-macos-beta.pkg" "dist/MyNumber-Bridge-macos-beta.pkg"
           tar -C build/vsmartcard-stage -czf "dist/MyNumber-Bridge-vpcd-stage-macos.tar.gz" .
 
       - name: Upload macOS artifacts
@@ -131,5 +135,6 @@ jobs:
 
             Included:
             - Android debug APK
+            - macOS beta pkg
             - macOS app bundle zip
             - staged vpcd payload for manual install

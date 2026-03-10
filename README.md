@@ -1,37 +1,29 @@
-# MyNumber Bridge PoC
+# MyNumber Bridge
 
-This directory captures the Mac-side work needed to use an Android phone as a
-network-backed NFC smart card reader for macOS smart card apps.
+This repo is a beta implementation of one specific idea:
+
+- use an Android phone as the card reader for a My Number card
+- bridge that phone into macOS smart card flows
+- make MynaPortal / e-Tax on Mac less dependent on QR handoff flows
 
 The working architecture is:
 
 1. `vpcd` exposes a virtual PC/SC reader on macOS.
-2. An Android app speaks the `vpicc` socket protocol over TCP.
-3. The Android app forwards APDUs to a physical My Number card via `IsoDep`.
+2. The Android app exposes a Bluetooth Classic endpoint.
+3. A macOS helper connects to that paired Android endpoint and forwards bytes into the local VPCD TCP port.
+4. The Android app forwards APDUs to a physical My Number card via `IsoDep`.
 
-This avoids reverse-engineering JPKI itself. The host only sees a smart card
-reader and opaque APDU traffic.
-
-There is now a second host-side path for better UX:
-
-1. `vpcd` still exposes the virtual PC/SC reader on macOS.
-2. The Android app advertises a Bluetooth Classic RFCOMM service when a card is present.
-3. A tiny macOS helper connects to that paired Android service and forwards bytes into the local VPCD TCP port.
-4. The Android app still forwards APDUs to the physical My Number card via `IsoDep`.
-
-There is also a first-cut desktop app on macOS:
-
-1. `MyNumber Bridge.app` wraps the Bluetooth RFCOMM client helper.
-2. It shows setup, bridge state, and the current step in one place.
-3. It lets you pick a paired Android device, start/stop the bridge, and open logs.
+This avoids reverse-engineering JPKI itself. The Mac side only sees a smart
+card reader and opaque APDU traffic.
 
 ## Current status
 
-Verified on this machine:
+Verified locally on:
 
 - macOS 15.2
 - Apple Silicon
 - Command Line Tools only, no full Xcode
+- Pixel 8a
 - `vsmartcard` `virtualsmartcard` builds successfully once `SDKROOT`,
   `CPPFLAGS`, and `LDFLAGS` are pinned explicitly
 
@@ -52,6 +44,7 @@ This repo ships with two workflows:
   - runs on pushed tags like `v0.1.0` or via `workflow_dispatch`
   - builds:
     - Android debug APK
+    - macOS beta pkg
     - macOS app bundle zip
     - staged `vpcd` payload tarball
   - publishes them to a GitHub Release
@@ -59,38 +52,62 @@ This repo ships with two workflows:
 At the moment the release workflow is aimed at beta distribution, not App Store
 or Play Store delivery.
 
+## Release assets
+
+Current beta releases contain:
+
+- `MyNumber-Reader-android-debug.apk`
+  - Android phone app
+- `MyNumber-Bridge-macos-beta.pkg`
+  - installs `MyNumber Bridge.app` into `/Applications`
+  - does not yet install the `vpcd` bundle automatically
+- `MyNumber-Bridge-macos-app.zip`
+  - same macOS app bundle as a zip
+- `MyNumber-Bridge-vpcd-stage-macos.tar.gz`
+  - staged `vpcd` payload for manual install
+
+The latest release is published on GitHub Releases for this repo.
+
 ## Quick start
+
+### Local build
 
 Build a staged `vpcd` bundle and helper binaries:
 
 ```sh
-bash ./mynumber-bridge/scripts/build_vpcd_macos.sh
+bash ./scripts/build_vpcd_macos.sh
 ```
 
-Build the menu bar app bundle:
+Build the macOS app bundle:
 
 ```sh
-bash ./mynumber-bridge/scripts/build_menubar_app_macos.sh
-open "./mynumber-bridge/build/mac-app/MyNumber Bridge.app"
+bash ./scripts/build_menubar_app_macos.sh
+open "./build/mac-app/MyNumber Bridge.app"
+```
+
+Build a beta pkg for the macOS app:
+
+```sh
+bash ./scripts/build_app_pkg_macos.sh
 ```
 
 Print only the `vpcd://...` URLs for the Android app:
 
 ```sh
-bash ./mynumber-bridge/scripts/print_vpcd_urls.sh
+bash ./scripts/print_vpcd_urls.sh
 ```
 
 List candidate USB devices that can be used to trigger the macOS reader bundle:
 
 ```sh
-bash ./mynumber-bridge/scripts/list_usb_ids.sh
+bash ./scripts/list_usb_ids.sh
 ```
 
 Render a patched `Info.plist` for your chosen USB device:
 
 ```sh
-python3 ./mynumber-bridge/scripts/render_info_plist.py \
-  --template mynumber-bridge/build/vsmartcard-stage/usr/local/libexec/SmartCardServices/drivers/ifd-vpcd.bundle/Contents/Info.plist \
+python3 ./scripts/render_info_plist.py \
+  --template build/vsmartcard-stage/usr/local/libexec/SmartCardServices/drivers/ifd-vpcd.bundle/Contents/Info.plist \
   --output /tmp/Info.plist \
   --vendor-id 0x18d1 \
   --product-id 0x4ee1
@@ -99,17 +116,26 @@ python3 ./mynumber-bridge/scripts/render_info_plist.py \
 At that point you can manually install:
 
 - the bundle payload from
-  `mynumber-bridge/build/vsmartcard-stage/usr/local/libexec/SmartCardServices/drivers/ifd-vpcd.bundle`
+  `build/vsmartcard-stage/usr/local/libexec/SmartCardServices/drivers/ifd-vpcd.bundle`
 - the helper binary
-  `mynumber-bridge/build/vsmartcard-stage/usr/local/bin/vpcd-config`
+  `build/vsmartcard-stage/usr/local/bin/vpcd-config`
 
 The install step is intentionally manual because it writes into
 `/usr/local/libexec/SmartCardServices` and restarts the Apple smart card stack.
 There is a helper for that:
 
 ```sh
-bash ./mynumber-bridge/scripts/install_vpcd_macos.sh
+bash ./scripts/install_vpcd_macos.sh
 ```
+
+### Beta install from GitHub Release
+
+1. Install `MyNumber-Bridge-macos-beta.pkg` on your Mac.
+2. Install `MyNumber-Reader-android-debug.apk` on your Android phone.
+3. Manually install the staged `vpcd` payload from `MyNumber-Bridge-vpcd-stage-macos.tar.gz`.
+4. Pair the phone and Mac over Bluetooth once.
+5. Open `MyNumber Bridge.app`, pick the phone, and press `Start Bridge`.
+6. Open MynaPortal or e-Tax on the Mac and touch the My Number card to the phone.
 
 ## Smoke test
 
@@ -141,7 +167,7 @@ If `adb` sees your Pixel, you can push the configuration without touching the
 phone UI:
 
 ```sh
-bash ./mynumber-bridge/scripts/push_vpcd_url_android.sh
+bash ./scripts/push_vpcd_url_android.sh
 ```
 
 That launches Android's `VIEW` intent for the first advertised `vpcd://` URL.
@@ -159,15 +185,14 @@ To use the Bluetooth path from the menu bar app:
 2. Build and open the app bundle:
 
 ```sh
-bash ./mynumber-bridge/scripts/build_menubar_app_macos.sh
-open "./mynumber-bridge/build/mac-app/MyNumber Bridge.app"
+bash ./scripts/build_menubar_app_macos.sh
+open "./build/mac-app/MyNumber Bridge.app"
 ```
 
-3. Use the menu bar icon to:
-   - open `Setup & Diagnostics`
+3. In `MyNumber Bridge`:
    - select the paired Pixel
    - start the bridge
-   - copy a diagnostic report or open helper logs if needed
+   - open logs if needed
 4. Keep the usual macOS `vpcd` reader installed so the local PC/SC side can wake
    `127.0.0.1:35963` when MynaPortal or e-Tax opens the reader.
 5. On Android, leave transport set to `Bluetooth Classic (Mac connects to this phone)`.
@@ -180,7 +205,7 @@ To use the lower-level CLI path directly:
 2. Run the RFCOMM client helper:
 
 ```sh
-/Users/mojashi/longlist/mynumber-bridge/build/bluetooth-helper/rfcomm-vpcd-client --device-address E8:D5:2B:2E:35:B4
+./build/bluetooth-helper/rfcomm-vpcd-client --device-address E8:D5:2B:2E:35:B4
 ```
 
 3. Keep the usual macOS `vpcd` listener alive on `127.0.0.1:35963`.
@@ -194,13 +219,14 @@ To use the lower-level CLI path directly:
   reader backed by Android NFC.
 - The imported Android app is upstream-based and not yet reworked into a fresh
   minimal codebase.
-- The desktop app is still a first cut. It wraps the helper, but does not yet
-  install the PC/SC bundle automatically, notarize itself, or ship a polished
-  installer.
+- The macOS beta pkg currently installs the app only. It does not yet install
+  the `vpcd` bundle automatically.
+- The macOS app is not notarized yet.
+- Android is still distributed as a direct APK, not through Play Store.
 
 ## References
 
-- `mynumber-bridge/PROTOCOL.md`
-- `mynumber-bridge/android/remote-reader/README.md`
+- `PROTOCOL.md`
+- `android/remote-reader/README.md`
 - Android NFC reader mode and `IsoDep`
 - `vsmartcard` `virtualsmartcard` and `remote-reader`
