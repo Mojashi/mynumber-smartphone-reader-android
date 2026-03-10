@@ -17,7 +17,7 @@ HELPER_PATH="$(bash "$ROOT_DIR/scripts/build_rfcomm_client_macos.sh")"
 
 mkdir -p "$APP_DIR/Contents/MacOS" "$APP_DIR/Contents/Resources"
 
-env -u DEVELOPER_DIR -u SDKROOT /usr/bin/swiftc \
+env -u DEVELOPER_DIR -u SDKROOT xcrun swiftc \
   -sdk "$SDKROOT_VALUE" \
   -target arm64-apple-macos13.0 \
   -framework AppKit \
