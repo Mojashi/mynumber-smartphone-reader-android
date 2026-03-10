@@ -1,0 +1,106 @@
+<resources>
+    <string name="app_name">MyNumber Reader</string>
+    <string name="main_toolbar_subtitle">Keep this screen open while your Mac asks for the card</string>
+
+    <string name="scheme_vpcd">vpcd</string>
+
+    <string name="hint_vpcd_port">VPCD Port</string>
+    <string name="hint_vpcd_hostname">VPCD Hostname</string>
+    <string name="hint_bluetooth_address">Mac Bluetooth Address</string>
+
+    <string name="vpcd_config_info">Recommended: Bluetooth Classic, where your Mac connects directly to this phone. TCP is still available for custom setups, and legacy Bluetooth client links can be imported with vpcd://bluetooth?address=AA:BB:CC:DD:EE:FF.</string>
+    <string-array name="transportModeLabels">
+        <item>Bluetooth Classic (Recommended, Mac connects to this phone)</item>
+        <item>TCP / Network</item>
+    </string-array>
+    <string-array name="transportModeValues">
+        <item>bluetooth_server</item>
+        <item>tcp</item>
+    </string-array>
+    <string-array name="strDelays">
+        <item>125 milliseconds</item>
+        <item>250 milliseconds</item>
+        <item>500 milliseconds</item>
+        <item>1 second</item>
+        <item>2 seconds</item>
+        <item>4 seconds</item>
+        <item>10 seconds</item>
+        <item>30 seconds</item>
+    </string-array>
+    <string-array name="intDelays">
+        <item>125</item>
+        <item>250</item>
+        <item>500</item>
+        <item>1000</item>
+        <item>2000</item>
+        <item>4000</item>
+        <item>10000</item>
+        <item>30000</item>
+    </string-array>
+    <string-array name="strTimeouts">
+        <item>125 milliseconds</item>
+        <item>250 milliseconds</item>
+        <item>500 milliseconds</item>
+        <item>1 second</item>
+        <item>2 seconds</item>
+        <item>3 seconds</item>
+        <item>4 seconds</item>
+        <item>10 seconds</item>
+        <item>30 seconds</item>
+    </string-array>
+    <string-array name="intTimeouts">
+        <item>125</item>
+        <item>250</item>
+        <item>500</item>
+        <item>1000</item>
+        <item>2000</item>
+        <item>3000</item>
+        <item>4000</item>
+        <item>10000</item>
+        <item>30000</item>
+    </string-array>
+
+    <string name="action_settings">Settings</string>
+    <string name="action_copy">Copy Log</string>
+    <string name="action_delete">Clear Log</string>
+
+    <string name="title_activity_settings">Settings</string>
+    <string name="hint_vpcd_listen">Listen for connections</string>
+    <string name="use_dummy_card_to_test_connection">Use dummy card to test connection</string>
+    <string name="label_transport">Transport</string>
+    <string name="label_last_event">Last event</string>
+    <string name="button_open_settings">Open App Settings</string>
+    <string name="button_open_bluetooth_settings">Open Bluetooth Settings</string>
+    <string name="button_open_nfc_settings">Open NFC Settings</string>
+    <string name="log_section_title">Activity log</string>
+    <string name="status_last_event_idle">Waiting for the next card session.</string>
+    <string name="status_badge_ready">Ready</string>
+    <string name="status_badge_waiting">Waiting</string>
+    <string name="status_badge_live">Live</string>
+    <string name="status_badge_action">Action needed</string>
+    <string name="status_badge_error">Error</string>
+    <string name="status_headline_ready_bluetooth_server">Ready for your Mac</string>
+    <string name="status_detail_ready_bluetooth_server">Leave this screen open. When your Mac asks for the card, touch the My Number card to the back of this phone.</string>
+    <string name="status_headline_ready_tcp">Ready for network VPCD</string>
+    <string name="status_detail_ready_tcp">This phone will talk to the card and forward APDUs over TCP. Make sure your Mac helper points at the configured host and port.</string>
+    <string name="status_headline_waiting_for_mac">Waiting for the Mac helper</string>
+    <string name="status_detail_waiting_for_mac">Bluetooth is up. Start the Mac bridge, then keep the My Number card at the back of this phone when the desktop asks for it.</string>
+    <string name="status_headline_waiting_for_card">Mac connected. Touch your card now.</string>
+    <string name="status_detail_waiting_for_card">The bridge is live. Keep the card steady on the back of this phone until the desktop flow moves on.</string>
+    <string name="status_headline_communicating">Talking to the card</string>
+    <string name="status_detail_communicating">APDU traffic is flowing. Hold the card still until the desktop finishes.</string>
+    <string name="status_headline_action_required">Finish setup on this phone</string>
+    <string name="status_detail_nfc_off">NFC is off. Turn it on so this phone can read the My Number card.</string>
+    <string name="status_detail_nfc_unavailable">This device does not expose NFC, so it cannot work as the card reader.</string>
+    <string name="status_detail_bluetooth_off">Bluetooth is off. Turn it on so your Mac can reach this phone.</string>
+    <string name="status_detail_bluetooth_permission">Bluetooth permission is missing. Grant it so the phone can accept the Mac connection.</string>
+    <string name="status_detail_bluetooth_address_missing">Bluetooth client mode needs a Mac Bluetooth address in Settings.</string>
+    <string name="status_detail_bluetooth_unavailable">Bluetooth Classic is not available on this device.</string>
+    <string name="status_headline_error">Bridge error</string>
+    <string name="status_detail_error_prefix">The last bridge event returned an error:</string>
+    <string name="transport_summary_tcp">TCP %1$s:%2$d</string>
+    <string name="transport_summary_bluetooth_server">Bluetooth Classic server on this phone. Your Mac connects here after pairing once.</string>
+    <string name="transport_summary_bluetooth_client">Bluetooth Classic client to %1$s</string>
+    <string name="transport_summary_not_configured">Not configured</string>
+
+</resources>

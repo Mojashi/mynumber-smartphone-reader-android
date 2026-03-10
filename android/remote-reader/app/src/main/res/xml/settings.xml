@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <PreferenceCategory
+        android:title="Virtual Smart Card Reader Driver">
+
+        <Preference
+            android:title="Reader Driver Available on Github"
+            android:summary="@string/vpcd_config_info">
+
+            <intent android:action="android.intent.action.VIEW"
+                android:data="https://frankmorgner.github.io/vsmartcard/virtualsmartcard/README.html" />
+        </Preference>
+
+        <Preference
+            android:title="Scan Configuration"
+            android:summary="Optional. You can also skip QR entirely and enter hostname and port manually, or import a legacy Bluetooth client link."
+            android:key="scan">
+        </Preference>
+
+        <ListPreference
+            android:key="transport_mode"
+            android:defaultValue="bluetooth_server"
+            android:title="Transport"
+            android:entries="@array/transportModeLabels"
+            android:entryValues="@array/transportModeValues" />
+
+        <EditTextPreference
+            android:key="hostname"
+            android:defaultValue="10.0.2.2"
+            android:title="@string/hint_vpcd_hostname"
+            android:hint="URL or IP address"
+            android:inputType="textUri" />
+
+        <EditTextPreference
+            android:key="port"
+            android:defaultValue="35963"
+            android:title="@string/hint_vpcd_port"
+            android:inputType="number"
+            android:hint="Default: 35963" />
+
+        <CheckBoxPreference
+            android:key="listen"
+            android:defaultValue="false"
+            android:title="@string/hint_vpcd_listen"
+            android:hint="Default: false" />
+
+        <Preference
+            android:title="Bluetooth System Settings"
+            android:summary="Pair this phone with your Mac once. In Bluetooth mode, the Mac connects to this phone directly."
+            android:key="bluetoothSettings">
+        </Preference>
+
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:title="Contactless Smart Card Communication">
+
+        <Preference
+            android:title="NFC System Settings"
+            android:summary="NFC needs to be enabled for contactless communication with the smart card"
+            android:key="nfcSettings">
+        </Preference>
+
+        <ListPreference
+            android:key="delay"
+            android:defaultValue="250"
+            android:title="Delay for Card Presence Check"
+            android:entries="@array/strDelays"
+            android:entryValues="@array/intDelays" />
+
+        <ListPreference
+            android:key="timeout"
+            android:defaultValue="500"
+            android:title="Delay for Card Response"
+            android:entries="@array/strTimeouts"
+            android:entryValues="@array/intTimeouts" />
+
+    </PreferenceCategory>
+
+</PreferenceScreen>

@@ -1,0 +1,7 @@
+<resources xmlns:tools="http://schemas.android.com/tools"
+    tools:keep="@xml/nfc_tech_filter">
+    <tech-list>
+        <!-- catches both, NfcA and NfcB -->
+        <tech>android.nfc.tech.IsoDep</tech>
+    </tech-list>
+</resources>

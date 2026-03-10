@@ -1,0 +1,390 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>MyNumber Bridge</title>
+  <style>
+    :root {
+      --bg: #efece2;
+      --ink: #192029;
+      --muted: #5b6064;
+      --line: #d7d6cf;
+      --hero: #23313d;
+      --hero-ink: #f8f4ee;
+      --accent: #e8dcc1;
+      --panel: #faf8f1;
+      --button: #245f96;
+      --button-stop: #9a4337;
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Hiragino Sans", sans-serif;
+      background: linear-gradient(180deg, #f3efe7 0%, var(--bg) 100%);
+      color: var(--ink);
+    }
+
+    .app {
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 28px 28px 40px;
+    }
+
+    .hero {
+      background: radial-gradient(circle at top right, #354756 0%, var(--hero) 45%, #1d2832 100%);
+      color: var(--hero-ink);
+      border-radius: 28px;
+      padding: 32px;
+      box-shadow: 0 18px 40px rgba(35, 49, 61, 0.18);
+    }
+
+    .hero-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 18px;
+    }
+
+    .eyebrow {
+      font-size: 13px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      opacity: 0.8;
+    }
+
+    h1 {
+      margin: 6px 0 0;
+      font-size: 40px;
+      line-height: 1;
+    }
+
+    .sub {
+      margin: 8px 0 0;
+      color: rgba(248, 244, 238, 0.75);
+      font-size: 15px;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 10px 16px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: white;
+      min-width: 104px;
+    }
+
+    .headline {
+      margin: 18px 0 8px;
+      font-size: 32px;
+      font-weight: 800;
+      line-height: 1.2;
+    }
+
+    .detail {
+      margin: 0;
+      color: rgba(248, 244, 238, 0.85);
+      font-size: 16px;
+      line-height: 1.6;
+      max-width: 760px;
+    }
+
+    .next {
+      margin-top: 22px;
+      background: var(--accent);
+      color: var(--ink);
+      border-radius: 18px;
+      padding: 16px 18px;
+      max-width: 520px;
+    }
+
+    .next-label {
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #6c654f;
+      margin-bottom: 6px;
+    }
+
+    .next-value {
+      font-size: 15px;
+      font-weight: 700;
+      line-height: 1.5;
+    }
+
+    .steps {
+      margin-top: 28px;
+      background: var(--panel);
+      border-radius: 24px;
+      padding: 8px 28px;
+      border: 1px solid var(--line);
+    }
+
+    .step {
+      display: grid;
+      grid-template-columns: 84px 1fr;
+      gap: 20px;
+      padding: 26px 0;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .step:last-child {
+      border-bottom: 0;
+    }
+
+    .step-no {
+      font-size: 30px;
+      font-weight: 900;
+      color: #7e7c76;
+      line-height: 1;
+    }
+
+    .step-title {
+      font-size: 24px;
+      font-weight: 800;
+      line-height: 1.2;
+      margin-bottom: 8px;
+    }
+
+    .step-copy {
+      color: var(--muted);
+      font-size: 15px;
+      line-height: 1.6;
+      margin-bottom: 16px;
+      max-width: 720px;
+    }
+
+    .device-list {
+      display: grid;
+      gap: 10px;
+      margin-top: 8px;
+    }
+
+    .device {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 14px 16px;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      background: white;
+      cursor: pointer;
+    }
+
+    .device.selected {
+      border-color: #2b648f;
+      background: #eef5fb;
+    }
+
+    .device input {
+      margin-top: 2px;
+      transform: scale(1.2);
+    }
+
+    .device-name {
+      font-size: 15px;
+      font-weight: 700;
+    }
+
+    .device-address {
+      font-size: 13px;
+      color: var(--muted);
+      margin-top: 3px;
+    }
+
+    .meta {
+      display: grid;
+      gap: 10px;
+      margin-top: 10px;
+      max-width: 580px;
+    }
+
+    .meta-row {
+      display: grid;
+      grid-template-columns: 160px 1fr;
+      gap: 16px;
+      align-items: start;
+      font-size: 14px;
+    }
+
+    .meta-key {
+      color: #6d716e;
+      font-weight: 700;
+    }
+
+    .meta-value {
+      color: var(--ink);
+      line-height: 1.5;
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 14px;
+    }
+
+    button {
+      appearance: none;
+      border: 0;
+      border-radius: 14px;
+      padding: 14px 18px;
+      font-size: 14px;
+      font-weight: 800;
+      color: white;
+      background: var(--button);
+      cursor: pointer;
+    }
+
+    button.secondary {
+      background: #dfe5e8;
+      color: var(--ink);
+    }
+
+    button.primary.stop {
+      background: var(--button-stop);
+    }
+
+    .empty {
+      color: var(--muted);
+      font-size: 14px;
+      padding: 14px 0 2px;
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <section class="hero">
+      <div class="hero-top">
+        <div>
+          <div class="eyebrow">MyNumber Bridge</div>
+          <h1>Android をカードリーダーとして使う</h1>
+          <div class="sub">Mac 側の準備と接続状態をここでまとめて進めます</div>
+        </div>
+        <div id="badge" class="badge">READY</div>
+      </div>
+      <div id="headline" class="headline">読み込み中</div>
+      <p id="detail" class="detail">状態を取得しています。</p>
+      <div class="next">
+        <div class="next-label">Next Action</div>
+        <div id="nextAction" class="next-value">...</div>
+      </div>
+    </section>
+
+    <main class="steps">
+      <section class="step">
+        <div class="step-no">01</div>
+        <div>
+          <div class="step-title">Mac を準備する</div>
+          <div class="step-copy">最初に smart card driver を入れます。入れたあとで状態を更新します。</div>
+          <div class="meta">
+            <div class="meta-row"><div class="meta-key">Driver</div><div id="driverStatus" class="meta-value">...</div></div>
+            <div class="meta-row"><div class="meta-key">Helper</div><div id="helperStatus" class="meta-value">...</div></div>
+          </div>
+          <div class="actions">
+            <button class="secondary" data-action="installDriver">Install Driver</button>
+            <button class="secondary" data-action="refresh">Refresh</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="step">
+        <div class="step-no">02</div>
+        <div>
+          <div class="step-title">使う Android を選ぶ</div>
+          <div class="step-copy">Bluetooth でペア済みの端末がここに並びます。使うスマホを 1 台だけ選びます。</div>
+          <div id="devices" class="device-list"></div>
+          <div id="devicesEmpty" class="empty" hidden>ペア済みの Android 端末が見つかりません。</div>
+          <div class="actions">
+            <button class="secondary" data-action="openBluetooth">Bluetooth Settings</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="step">
+        <div class="step-no">03</div>
+        <div>
+          <div class="step-title">Bridge を開始してログインする</div>
+          <div class="step-copy">Bridge を起動したら、必要なサイトやアプリを開きます。カード読取が始まったら Android 側でカードを当てます。</div>
+          <div class="meta">
+            <div class="meta-row"><div class="meta-key">状態</div><div id="bridgeTitle" class="meta-value">...</div></div>
+            <div class="meta-row"><div class="meta-key">マイナポータル</div><div id="portalStatus" class="meta-value">...</div></div>
+            <div class="meta-row"><div class="meta-key">Latest Log</div><div id="lastLog" class="meta-value">...</div></div>
+          </div>
+          <div class="actions">
+            <button id="primaryAction" class="primary" data-action="primary">Start Bridge</button>
+            <button class="secondary" data-action="openPortal">Open MynaPortal</button>
+            <button class="secondary" data-action="openLog">Open Helper Log</button>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    const bridge = (action, extra = {}) => {
+      if (window.webkit?.messageHandlers?.bridge) {
+        window.webkit.messageHandlers.bridge.postMessage({ action, ...extra });
+      }
+    };
+
+    document.addEventListener('click', (event) => {
+      const button = event.target.closest('button[data-action]');
+      if (!button) return;
+      bridge(button.dataset.action);
+    });
+
+    window.renderApp = (data) => {
+      document.getElementById('headline').textContent = data.headline;
+      document.getElementById('detail').textContent = data.detail;
+      document.getElementById('nextAction').textContent = data.nextAction;
+
+      const badge = document.getElementById('badge');
+      badge.textContent = data.badgeText;
+      badge.style.background = data.badgeColor;
+
+      document.getElementById('driverStatus').textContent = data.driverInstalled ? 'Installed' : 'Missing';
+      document.getElementById('helperStatus').textContent = data.helperBundled ? 'Bundled' : 'Missing';
+      document.getElementById('bridgeTitle').textContent = data.bridgeTitle;
+      document.getElementById('portalStatus').textContent = data.mynaPortalInstalled ? 'Installed' : 'Not found';
+      document.getElementById('lastLog').textContent = data.lastLogLine;
+
+      const primary = document.getElementById('primaryAction');
+      primary.textContent = data.bridgeRunning ? 'Stop Bridge' : 'Start Bridge';
+      primary.classList.toggle('stop', data.bridgeRunning);
+
+      const devices = document.getElementById('devices');
+      const empty = document.getElementById('devicesEmpty');
+      devices.innerHTML = '';
+
+      if (!data.devices.length) {
+        empty.hidden = false;
+      } else {
+        empty.hidden = true;
+        data.devices.forEach((device) => {
+          const label = document.createElement('label');
+          label.className = `device${device.selected ? ' selected' : ''}`;
+          label.innerHTML = `
+            <input type="radio" name="device" ${device.selected ? 'checked' : ''}>
+            <div>
+              <div class="device-name">${device.name}</div>
+              <div class="device-address">${device.address}</div>
+            </div>
+          `;
+          label.addEventListener('change', () => bridge('selectDevice', { address: device.address }));
+          label.querySelector('input').addEventListener('change', () => bridge('selectDevice', { address: device.address }));
+          devices.appendChild(label);
+        });
+      }
+    };
+  </script>
+</body>
+</html>

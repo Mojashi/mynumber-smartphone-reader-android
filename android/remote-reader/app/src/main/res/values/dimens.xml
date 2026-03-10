@@ -1,0 +1,9 @@
+<resources>
+    <dimen name="app_bar_height">180dp</dimen>
+    <dimen name="fab_margin">16dp</dimen>
+    <dimen name="text_margin">16dp</dimen>
+    <dimen name="content_gutter">16dp</dimen>
+    <dimen name="panel_padding">18dp</dimen>
+    <dimen name="content_section_gap">16dp</dimen>
+    <dimen name="log_min_height">280dp</dimen>
+</resources>

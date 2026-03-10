@@ -1,0 +1,39 @@
+apply plugin: 'com.android.application'
+
+android {
+    compileSdk 34
+
+    defaultConfig {
+        applicationId "com.vsmartcard.remotesmartcardreader.app"
+        // NFC reader mode was added in KitKat (19)
+        // androidx.appcompat:appcompat-resources:1.7.0 requires 21
+        minSdk 21
+        //noinspection ExpiredTargetSdkVersion
+        targetSdk 34
+        versionCode 8
+        versionName "2.4"
+        base.archivesName = "remote-reader-$versionName"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+    namespace 'com.vsmartcard.remotesmartcardreader.app'
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    testImplementation 'junit:junit:4.13.2'
+    implementation 'androidx.appcompat:appcompat:1.7.0'
+    implementation 'com.google.android.material:material:1.12.0'
+    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
+
+    implementation 'com.journeyapps:zxing-android-embedded:4.3.0'
+}
