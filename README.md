@@ -19,10 +19,10 @@ There is now a second host-side path for better UX:
 3. A tiny macOS helper connects to that paired Android service and forwards bytes into the local VPCD TCP port.
 4. The Android app still forwards APDUs to the physical My Number card via `IsoDep`.
 
-There is also a first-cut menu bar app on macOS:
+There is also a first-cut desktop app on macOS:
 
-1. `MyNumber Bridge.app` lives in the menu bar instead of a raw terminal.
-2. It wraps the Bluetooth RFCOMM client helper.
+1. `MyNumber Bridge.app` wraps the Bluetooth RFCOMM client helper.
+2. It shows setup, bridge state, and the current step in one place.
 3. It lets you pick a paired Android device, start/stop the bridge, and open logs.
 
 ## Current status
@@ -39,6 +39,25 @@ The practical phone-side implementation is the forked `remote-reader` app under
 `mynumber-bridge/android/remote-reader`. The Android SDK and Gradle wrapper are
 working in this workspace with `JAVA_HOME=/opt/homebrew/opt/openjdk@17`, and
 `assembleDebug` succeeds.
+
+## GitHub Actions
+
+This repo ships with two workflows:
+
+- `CI`
+  - runs on `push` and `pull_request`
+  - builds the Android debug APK on Ubuntu
+  - builds the macOS app bundle on macOS
+- `Release`
+  - runs on pushed tags like `v0.1.0` or via `workflow_dispatch`
+  - builds:
+    - Android debug APK
+    - macOS app bundle zip
+    - staged `vpcd` payload tarball
+  - publishes them to a GitHub Release
+
+At the moment the release workflow is aimed at beta distribution, not App Store
+or Play Store delivery.
 
 ## Quick start
 
@@ -175,8 +194,9 @@ To use the lower-level CLI path directly:
   reader backed by Android NFC.
 - The imported Android app is upstream-based and not yet reworked into a fresh
   minimal codebase.
-- The menu bar app is still a first cut. It wraps the helper, but does not yet
-  install the PC/SC bundle, sign itself for release, or register launch-at-login.
+- The desktop app is still a first cut. It wraps the helper, but does not yet
+  install the PC/SC bundle automatically, notarize itself, or ship a polished
+  installer.
 
 ## References
 
