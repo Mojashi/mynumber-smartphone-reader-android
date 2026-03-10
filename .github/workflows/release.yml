@@ -131,10 +131,10 @@ jobs:
           draft: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.draft == 'true' }}
           files: dist/*
           body: |
-            Beta release assets for MyNumber smartphone reader.
+            MyNumber Bridge の beta 配布物です。
 
-            Included:
+            含まれるもの:
             - Android debug APK
             - macOS beta pkg
             - macOS app bundle zip
-            - staged vpcd payload for manual install
+            - 手動導入用の staged vpcd payload

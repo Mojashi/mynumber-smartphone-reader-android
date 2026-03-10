@@ -1,38 +1,38 @@
-# VPCD Socket Protocol Notes
+# VPCD Socket Protocol メモ
 
-The host-side contract is simple enough to reimplement without touching JPKI.
+host 側の契約はかなり小さいので、JPKI に触らなくても再実装できます。
 
-## Transport framing
+## 転送フォーマット
 
-`vpcd` and the phone-side app exchange:
+`vpcd` とスマホ側アプリの間では、次をやり取りします。
 
-- a 2-byte big-endian payload length
-- followed by that many payload bytes
+- 2 バイトの big-endian payload length
+- 続けてその長さぶんの payload bytes
 
-There is no extra session header.
+追加のセッションヘッダはありません。
 
-## Control packets
+## 制御パケット
 
-A payload of length `1` is a reader control command:
+payload 長が `1` のときは reader 制御コマンドです。
 
 - `0x00`: power off
 - `0x01`: power on
 - `0x02`: warm reset
-- `0x04`: fetch ATR
+- `0x04`: ATR 取得
 
-For `0x04`, the phone returns the ATR bytes in a normal framed response.
+`0x04` に対しては、スマホ側が通常の framed response として ATR bytes を返します。
 
-## APDU packets
+## APDU パケット
 
-Any payload longer than 1 byte is treated as a C-APDU. The phone forwards the
-APDU to the card and returns the raw R-APDU bytes.
+payload 長が 2 以上なら C-APDU として扱います。スマホ側はそれをカードへ送り、
+生の R-APDU bytes を返します。
 
-The host does not need to understand My Number APDUs. It only needs to relay
-them losslessly.
+host 側はマイナンバーカードの APDU 内容を理解する必要はなく、`ロスなく中継する`
+だけで足ります。
 
-## Android-side primitives
+## Android 側で最低限使うもの
 
-The minimum Android implementation uses:
+最小実装では次を使います。
 
 - `NfcAdapter.enableReaderMode(...)`
 - `Tag`
@@ -41,24 +41,23 @@ The minimum Android implementation uses:
 - `IsoDep.transceive(apdu)`
 - `IsoDep.getHistoricalBytes()`
 
-The upstream `remote-reader` app maps contactless card data into a synthetic
-PC/SC ATR:
+upstream の `remote-reader` は、contactless card の情報から synthetic な PC/SC ATR を作ります。
 
-- Type A: use historical bytes from ATS
-- Type B: use application data + protocol info + MBLI
+- Type A: ATS の historical bytes を使う
+- Type B: application data + protocol info + MBLI を使う
 
-That is sufficient for the host to see a contactless smart card via PC/SC.
+これで host 側からは contactless smart card が PC/SC reader 配下に見えます。
 
-## macOS-side constraints
+## macOS 側の制約
 
-Recent macOS versions do not expose a generic PCSC-Lite reader drop-in path.
-`vpcd` works by pretending to be a USB smart card reader bundle, so:
+最近の macOS は generic な PCSC-Lite reader drop-in を素直には出していません。
+`vpcd` は USB smart card reader bundle のふりをして読ませるので、次が必要です。
 
-- the bundle needs an `Info.plist`
-- the plist must match a real USB vendor/product ID
-- plugging that USB device triggers the bundle load
+- bundle に `Info.plist` があること
+- plist が実在する USB vendor/product ID と一致すること
+- その USB デバイスを挿すと bundle load が走ること
 
-## Practical implication
+## 実務上の意味
 
-The hard part is not APDU relay. The hard part is getting macOS to load the
-reader bundle. Once `vpcd` is loaded, the phone-side protocol is small.
+難しいのは APDU relay 自体ではありません。難しいのは `macOS に reader bundle を読ませること`
+です。`vpcd` が読まれてしまえば、スマホ側の protocol はかなり小さいです。

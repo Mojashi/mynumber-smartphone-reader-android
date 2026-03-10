@@ -1,36 +1,36 @@
 # Remote Smart Card Reader Fork
 
-This is a workspace-local fork of the upstream `vsmartcard` Android app.
+このディレクトリは、upstream `vsmartcard` Android アプリの
+workspace ローカル fork です。
 
-Purpose here:
+この fork の目的は次です。
 
-- use a Pixel as an NFC-backed reader for a My Number card
-- connect to macOS `vpcd`
-- avoid QR scanning by using manual host/port entry or a `vpcd://HOST:PORT`
-  deeplink
+- Pixel をマイナンバーカード用の NFC reader として使う
+- macOS 側の `vpcd` と接続する
+- `vpcd://HOST:PORT` の deeplink や手入力を使い、QR 依存を減らす
 
-What already works in this codebase:
+この codebase ですでに動いているもの:
 
-- manual `hostname` and `port` settings
-- import via `vpcd://...` deep link
-- NFC reader mode with `IsoDep`
+- `hostname` / `port` の手動設定
+- `vpcd://...` deep link での取込
+- `IsoDep` を使った NFC reader mode
 - `vpcd` socket protocol
 
-What is not yet done here:
+まだ整理し切れていないもの:
 
-- local APK build in this workspace
-- app-specific UX cleanup for My Number flows
+- MyNumber 専用 UX への全面的な整理
+- upstream 由来コードの縮小と専用化
 
-## Build prerequisites
+## Build 前提
 
-This project was checked with:
+確認した build 環境:
 
 - `JAVA_HOME=/opt/homebrew/opt/openjdk@17`
 - Gradle wrapper `8.10`
 
-The current blocking item for `assembleDebug` is only the Android SDK path.
-Create `local.properties` from `local.properties.example` and point it at your
-SDK, for example:
+`assembleDebug` で必要なのは Android SDK path です。
+`local.properties.example` から `local.properties` を作り、SDK を指してください。
+例えば:
 
 ```sh
 cp local.properties.example local.properties
@@ -38,13 +38,13 @@ sed -i '' "s#__SDK_DIR__#$HOME/Library/Android/sdk#" local.properties
 JAVA_HOME=/opt/homebrew/opt/openjdk@17 ./gradlew assembleDebug
 ```
 
-Useful commands from the workspace root:
+workspace root から便利なコマンド:
 
 ```sh
 bash ./mynumber-bridge/scripts/print_vpcd_urls.sh
 bash ./mynumber-bridge/scripts/push_vpcd_url_android.sh
 ```
 
-Upstream project:
+upstream project:
 
 - https://github.com/frankmorgner/vsmartcard

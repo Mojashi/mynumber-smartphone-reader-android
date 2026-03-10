@@ -1,20 +1,19 @@
 # Chrome Native Host PoC
 
-This directory contains a macOS native messaging host for the Chrome extension
-`e-Tax AP`.
+このディレクトリには、Chrome 拡張 `e-Tax AP` 向けの macOS native messaging host が入っています。
 
-The host name expected by the extension is:
+拡張が期待する host 名は次です。
 
 `nta.chrome.ext`
 
-Current behavior:
+現状の動きはこうです。
 
-- accept Chrome native messaging connections
-- bridge a subset of requests into `CLeTaxWEB://...`
-- poll the e-Tax app group container for `data.plist` results
-- return Chrome-style chunked `{"JSONDATA":"..."}` responses
+- Chrome native messaging 接続を受ける
+- 一部メッセージを `CLeTaxWEB://...` へ橋渡しする
+- e-Tax の app group container から `data.plist` の結果を拾う
+- Chrome 風の chunked `{"JSONDATA":"..."}` 応答を返す
 
-Supported direct message names right now:
+現在、直接対応している `MessageType` は次です。
 
 - `StartProcess`
 - `PollingProcess`
@@ -27,52 +26,49 @@ Supported direct message names right now:
 - `SignToReportEltax`
 - `SignToCertificateRegistration`
 
-Unknown `MessageType` values are still logged and answered with a structured
-error payload. That keeps the extension responsive while we learn the Chrome
-flow.
+未知の `MessageType` はログに残しつつ、構造化エラーを返します。
 
-## Install
+## インストール
 
 ```sh
-bash ./mynumber-bridge/chrome-host/install_chrome_host.sh
+bash ./chrome-host/install_chrome_host.sh
 ```
 
-If your installed extension ID differs from the default, pass it explicitly:
+拡張 ID がデフォルトと違う場合は、明示的に渡してください。
 
 ```sh
-bash ./mynumber-bridge/chrome-host/install_chrome_host.sh --extension-id YOUR_ID
+bash ./chrome-host/install_chrome_host.sh --extension-id YOUR_ID
 ```
 
-## Logs
+## ログ
 
-Requests and responses are written to:
+リクエストとレスポンスは次に出ます。
 
 `~/Library/Logs/mynumber-bridge/nta.chrome.ext.log`
 
-The macOS bridge uses the app group container created by `CLeTaxWEB.app`:
+macOS bridge は `CLeTaxWEB.app` が作る app group container を使います。
 
 `~/Library/Group Containers/jp.go.nta.eTaxWebGroup`
 
-Each request gets a per-UID folder such as:
+各 request には `uid` ごとのフォルダが作られます。
 
 `~/Library/Group Containers/jp.go.nta.eTaxWebGroup/<uid>/data.plist`
 
-## Extension
+## 拡張
 
-The official `e-Tax AP` CRX can be downloaded from:
+公式の `e-Tax AP` CRX は次から落とせます。
 
 `https://dl.e-tax.nta.go.jp/clientweb/jizen_uketsuke/e-Tax-AP.crx`
 
-The host installer does not install the extension itself.
+この installer は拡張自体までは入れません。
 
-## Local Test
+## ローカルテスト
 
-You can exercise the native host without Chrome:
+Chrome を使わずに native host だけ試す場合:
 
 ```sh
-python3 ./mynumber-bridge/chrome-host/test_native_host.py \
+python3 ./chrome-host/test_native_host.py \
   '{"MessageType":"StartProcess","uid":"probe-cli"}'
 ```
 
-That should emit a list of native messaging frames, typically one or more
-`{"JSONDATA":"..."}` chunks followed by `{"JSONDATA":""}`.
+通常は `{"JSONDATA":"..."}` の chunk が 1 個以上出て、最後に `{"JSONDATA":""}` が返ります。
